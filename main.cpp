@@ -155,14 +155,8 @@ int main() {
 
                 // Dessin des Orbites, Traînées et Électrons
                 for (const auto& e : electrons) {
-                    
-                    // La normale définit le même plan que les coordonnées de l'électron.
-                    Vector3 orbitNormal = {
-                        0.0f,
-                        -cosf(e.inclination),
-                        sinf(e.inclination)
-                    };
-                    DrawCircle3D((Vector3){0, 0, 0}, e.radius, orbitNormal, 90.0f, Fade(e.color, 0.08f));
+    
+                    DrawCircle3D((Vector3){0, 0, 0}, e.radius, {1,0,0}, 90.0f - e.inclination * RAD2DEG, Fade(e.color, 0.08f));
 
                     // B. Dessin de la traînée (liaison des points historiques)
                     if (e.trail.size() > 1) {
