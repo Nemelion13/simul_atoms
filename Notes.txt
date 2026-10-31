@@ -1,0 +1,38 @@
+Simulation 3D en C++ de la rotation des électrons d'un atome autour de son noyau.
+
+Modèle retenu : Modèle de Bohr
+
+atome
+    - représentation : multiples sphères de nucléons
+    -nombre d'électrons, entier, couleur rouge
+    - nombre de nucléons, entier, couleur blanche
+    - nombre de protons, entier, couleur bleu
+    - couches électroniques, class
+    - nom, string
+    - abréviation du nom, string
+    - coordonnées, float, x,y,z
+    - configuration électronique
+
+electrons
+    - représentation: sphères
+    - vitesse
+    - trajectoire
+    - coordonnées, float, x,y z=0
+
+couches électroniques
+    - Réprésentation : cercle gris(pas très visible) de centre le noyau et de diamètre d
+    - nombre maximal d'électrons acceptées
+
+configuration électronique
+    - liste ordonnée de couche électronique
+    - {"1s": [], "2s":[]}
+
+class atom
+    private:
+        int A; // nombre de nucléons
+        int Z; // nombre de protons
+        unsigned float mass; // masse en kg
+        float 
+    public:
+        int nbr_electron = Z;
+

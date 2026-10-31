@@ -1,0 +1,3 @@
+C:/Users/hp/Desktop/CPP Training/simul_atoms/build/CMakeFiles/simul_atoms.dir
+C:/Users/hp/Desktop/CPP Training/simul_atoms/build/CMakeFiles/edit_cache.dir
+C:/Users/hp/Desktop/CPP Training/simul_atoms/build/CMakeFiles/rebuild_cache.dir

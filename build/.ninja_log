@@ -1,0 +1,6 @@
+# ninja log v7
+70	9446	8150362258423144	CMakeFiles/simul_atoms.dir/main.cpp.obj	8d50ec860f0a95f4
+9482	11358	8150362352530657	simul_atoms.exe	5117bdafd09e025e
+1348	26694	8151097698168622	CMakeFiles/simul_atoms.dir/main.cpp.obj	8d50ec860f0a95f4
+1362	26707	8151097698308571	CMakeFiles/simul_atoms.dir/atoms.cpp.obj	7fd93c1becd65296
+26708	33496	8151097951771314	simul_atoms.exe	642c57e5f138416c
