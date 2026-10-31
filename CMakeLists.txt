@@ -11,3 +11,10 @@ find_path(RAYGUI_INCLUDE_DIR raygui.h HINTS "$ENV{MINGW_PREFIX}/include" REQUIRE
 add_executable(simul_atoms main.cpp atoms.cpp)
 target_include_directories(simul_atoms PRIVATE "${RAYGUI_INCLUDE_DIR}")
 target_link_libraries(simul_atoms PRIVATE raylib)
+
+file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Tools")
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/Tools/logo.png"
+    "${CMAKE_CURRENT_BINARY_DIR}/Tools/logo.png"
+    COPYONLY
+)

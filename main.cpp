@@ -48,6 +48,21 @@ int main() {
     InitWindow(screenWidth, screenHeight, "Simulation Atomique Avancee - C++ & Raylib");
     SetWindowMinSize(800, 600);
 
+    const char* iconPath = FileExists("Tools/logo.png")
+        ? "Tools/logo.png"
+        : "../Tools/logo.png";
+    if (FileExists(iconPath)) {
+        Image windowIcon = LoadImage(iconPath);
+        if (windowIcon.data != nullptr) {
+            SetWindowIcon(windowIcon);
+            UnloadImage(windowIcon);
+        } else {
+            TraceLog(LOG_WARNING, "Unable to load window icon: %s", iconPath);
+        }
+    } else {
+        TraceLog(LOG_WARNING, "Window icon not found: Tools/logo.png");
+    }
+
     // Liste Raygui : chaque nom est séparé du suivant par un point-virgule.
     std::string atomNames;
     for (const AtomConfig& atom : ATOMS) {
@@ -147,8 +162,8 @@ int main() {
                 for (int i = 0; i < totalNucleons; i++) {
                     float offset = (float)i * 0.5f;
                     float nx = sinf(offset * 3.0f) * 0.4f;
-                    float ny = cosf(offset * 2.0f) * 0.5f;
-                    float nz = sinf(offset * 1.5f) * 0.6f;
+                    float ny = cosf(offset * 2.0f) * 0.3f;
+                    float nz = sinf(offset * 1.5f) * 0.35f;
                     Color nColor = (i % 2 == 0 && ATOMS[currentAtomIndex].atomicNumber > i/2) ? RED : RAYWHITE;
                     DrawSphere((Vector3){ nx, ny, nz }, 0.3f, nColor);
                 }
@@ -202,7 +217,7 @@ int main() {
             
             DrawText(TextFormat("Configuration: %s", selectedAtom.name), 30, infoPanelY + 10, 16, WHITE);
             DrawText(TextFormat("- Protons (Rouge) : %d", selectedAtom.atomicNumber), 30, infoPanelY + 40, 15, RED);
-            DrawText(TextFormat("- Neutrons (Gris) : %d", selectedAtom.neutrons), 30, infoPanelY + 65, 15, GRAY);
+            DrawText(TextFormat("- Neutrons (Blanc) : %d", selectedAtom.neutrons), 30, infoPanelY + 65, 15, GRAY);
             DrawText(TextFormat("- Electrons : %d", selectedAtom.atomicNumber), 30, infoPanelY + 90, 15, SKYBLUE);
 
             DrawText("Configuration electronique :", 320, infoPanelY + 55, 16, LIGHTGRAY);
