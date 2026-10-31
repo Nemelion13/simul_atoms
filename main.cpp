@@ -43,8 +43,10 @@ void DrawElectronicConfiguration(
 int main() {
     // Initialisation de la fenêtre
     const int screenWidth = 1024;
-    const int screenHeight = 768;
+    const int screenHeight = 700;
+    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(screenWidth, screenHeight, "Simulation Atomique Avancee - C++ & Raylib");
+    SetWindowMinSize(800, 600);
 
     // Liste Raygui : chaque nom est séparé du suivant par un point-virgule.
     std::string atomNames;
@@ -64,15 +66,47 @@ int main() {
     camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
+    float cameraYaw = 0.0f;
+    float cameraPitch = atan2f(12.0f, 18.0f);
+    float cameraDistance = sqrtf(12.0f * 12.0f + 18.0f * 18.0f);
+    bool automaticCameraOrbit = false;
+    constexpr float automaticCameraOrbitSpeed = 0.35f;
 
     // nombre d'images par seconde
     SetTargetFPS(60);
 
     while (!WindowShouldClose()) {
-        // Mode caméra orbitale automatique avec la souris
-        UpdateCamera(&camera, CAMERA_ORBITAL);
+        const float deltaTime = GetFrameTime();
+        const Vector2 mousePosition = GetMousePosition();
+        const Rectangle autoOrbitButtonBounds = {
+            static_cast<float>(GetScreenWidth()) - 210.0f, 20.0f, 190.0f, 30.0f
+        };
+        const bool mouseOverAutoOrbitButton =
+            CheckCollisionPointRec(mousePosition, autoOrbitButtonBounds);
+        if (automaticCameraOrbit) {
+            cameraYaw += automaticCameraOrbitSpeed * deltaTime;
+        }
 
-        float deltaTime = GetFrameTime();
+        if (IsMouseButtonDown(MOUSE_BUTTON_LEFT) &&
+            mousePosition.x > 240.0f &&
+            !mouseOverAutoOrbitButton) {
+            const Vector2 mouseDelta = GetMouseDelta();
+            cameraYaw -= mouseDelta.x * 0.005f;
+            cameraPitch += mouseDelta.y * 0.005f;
+            cameraPitch = fmaxf(-PI / 2.0f + 0.05f,
+                fminf(cameraPitch, PI / 2.0f - 0.05f));
+        }
+
+        if (mousePosition.x > 240.0f && !mouseOverAutoOrbitButton) {
+            cameraDistance -= GetMouseWheelMove() * cameraDistance * 0.1f;
+            cameraDistance = fmaxf(5.0f, fminf(cameraDistance, 60.0f));
+        }
+
+        camera.position = (Vector3){
+            camera.target.x + cameraDistance * cosf(cameraPitch) * sinf(cameraYaw),
+            camera.target.y + cameraDistance * sinf(cameraPitch),
+            camera.target.z + cameraDistance * cosf(cameraPitch) * cosf(cameraYaw)
+        };
 
         // --- MISE A JOUR DES ELECTRONS & TRAINÉES ---
         for (auto& e : electrons) {
@@ -96,6 +130,13 @@ int main() {
         // --- RENDU GRAPHIQUE ---
         BeginDrawing();
             ClearBackground(BLACK);
+            const int currentScreenWidth = GetScreenWidth();
+            const int currentScreenHeight = GetScreenHeight();
+
+            if (GuiButton(autoOrbitButtonBounds,
+                automaticCameraOrbit ? "Arreter la rotation" : "Rotation automatique")) {
+                automaticCameraOrbit = !automaticCameraOrbit;
+            }
 
             // 1. RENDU DE LA SCÈNE 3D
             BeginMode3D(camera);
@@ -106,17 +147,22 @@ int main() {
                 for (int i = 0; i < totalNucleons; i++) {
                     float offset = (float)i * 0.5f;
                     float nx = sinf(offset * 3.0f) * 0.4f;
-                    float ny = cosf(offset * 2.0f) * 0.4f;
-                    float nz = sinf(offset * 1.5f) * 0.4f;
+                    float ny = cosf(offset * 2.0f) * 0.5f;
+                    float nz = sinf(offset * 1.5f) * 0.6f;
                     Color nColor = (i % 2 == 0 && ATOMS[currentAtomIndex].atomicNumber > i/2) ? RED : RAYWHITE;
-                    DrawSphere((Vector3){ nx, ny, nz }, 0.1f, nColor);
+                    DrawSphere((Vector3){ nx, ny, nz }, 0.3f, nColor);
                 }
 
                 // Dessin des Orbites, Traînées et Électrons
                 for (const auto& e : electrons) {
                     
-                    // A. Dessin de l'orbite théorique complète (ligne fine atténuée)
-                    DrawCircle3D((Vector3){0,0,0}, e.radius, (Vector3){0, sinf(e.inclination), cosf(e.inclination)}, 90.0f, Fade(e.color, 0.08f));
+                    // La normale définit le même plan que les coordonnées de l'électron.
+                    Vector3 orbitNormal = {
+                        0.0f,
+                        -cosf(e.inclination),
+                        sinf(e.inclination)
+                    };
+                    DrawCircle3D((Vector3){0, 0, 0}, e.radius, orbitNormal, 90.0f, Fade(e.color, 0.08f));
 
                     // B. Dessin de la traînée (liaison des points historiques)
                     if (e.trail.size() > 1) {
@@ -142,7 +188,8 @@ int main() {
             DrawText("SIMULATION ATOMIQUE 3D", 20, 20, 22, GOLD);
             DrawText("Choisissez un element :", 20, 55, 15, LIGHTGRAY);
 
-            Rectangle atomListBounds = { 20.0f, 80.0f, 230.0f, 480.0f };
+            const float atomListHeight = static_cast<float>(currentScreenHeight - 310);
+            Rectangle atomListBounds = { 20.0f, 80.0f, 200.0f, atomListHeight };
             int selectedAtomIndex = currentAtomIndex;
             GuiListView(atomListBounds, atomNames.c_str(), &atomListScrollIndex, &selectedAtomIndex);
             if (selectedAtomIndex >= 0 && selectedAtomIndex != currentAtomIndex) {
@@ -155,18 +202,20 @@ int main() {
                 GetElectronicConfiguration(selectedAtom.atomicNumber);
 
             // Panneau d'informations sur l'atome sélectionné (En bas à gauche)
-            DrawRectangle(20, 600, 260, 140, GetColor(0x111111CC));
-            DrawRectangleLines(20, 600, 260, 140, DARKGRAY);
+            const int infoPanelY = currentScreenHeight - 160;
+            DrawRectangle(20, infoPanelY, 260, 140, GetColor(0x111111CC));
+            DrawRectangleLines(20, infoPanelY, 260, 140, DARKGRAY);
             
-            DrawText(TextFormat("Configuration: %s", selectedAtom.name), 30, 610, 16, WHITE);
-            DrawText(TextFormat("- Protons (Rouge) : %d", selectedAtom.atomicNumber), 30, 640, 15, RED);
-            DrawText(TextFormat("- Neutrons (Gris) : %d", selectedAtom.neutrons), 30, 665, 15, GRAY);
-            DrawText(TextFormat("- Electrons : %d", selectedAtom.atomicNumber), 30, 690, 15, SKYBLUE);
+            DrawText(TextFormat("Configuration: %s", selectedAtom.name), 30, infoPanelY + 10, 16, WHITE);
+            DrawText(TextFormat("- Protons (Rouge) : %d", selectedAtom.atomicNumber), 30, infoPanelY + 40, 15, RED);
+            DrawText(TextFormat("- Neutrons (Gris) : %d", selectedAtom.neutrons), 30, infoPanelY + 65, 15, GRAY);
+            DrawText(TextFormat("- Electrons : %d", selectedAtom.atomicNumber), 30, infoPanelY + 90, 15, SKYBLUE);
 
-            DrawText("Configuration electronique :", 320, 655, 16, LIGHTGRAY);
-            DrawElectronicConfiguration(electronicConfiguration, 320, 680, screenWidth);
+            DrawText("Configuration electronique :", 320, infoPanelY + 55, 16, LIGHTGRAY);
+            DrawElectronicConfiguration(electronicConfiguration, 320, infoPanelY + 80, currentScreenWidth);
             // Aide navigation
-            DrawText("Utilisez la souris pour tourner la camera autour de l'atome", 320, 735, 14, GRAY);
+            DrawText("Clic gauche + deplacement : tourner | Molette : zoom",
+                320, currentScreenHeight - 25, 14, GRAY);
 
         EndDrawing();
     }
