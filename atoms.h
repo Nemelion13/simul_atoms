@@ -4,6 +4,7 @@
 #include "raylib.h"
 
 #include <deque>
+#include <string>
 #include <vector>
 
 struct Electron {
@@ -17,14 +18,20 @@ struct Electron {
 
 struct AtomConfig {
     const char* name;
-    int protons;
+    int atomicNumber;
     int neutrons;
-    int electronsK;
-    int electronsL;
+};
+
+struct ElectronicSubshell {
+    int principalNumber;
+    char orbital;
+    int electronCount;
 };
 
 extern const std::vector<AtomConfig> ATOMS;
 
+std::vector<ElectronicSubshell> GetElectronicConfiguration(int atomicNumber);
+std::string FormatElectronicConfiguration(const std::vector<ElectronicSubshell>& configuration);
 std::vector<Electron> CreateElectrons(AtomConfig config);
 
 #endif

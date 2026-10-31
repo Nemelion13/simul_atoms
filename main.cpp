@@ -1,17 +1,61 @@
 /* Simulation 3D de la rotation des électrons d'un atome autour de son noyau*/
 #include "raylib.h"
 #include "atoms.h"
+#define RAYGUI_IMPLEMENTATION
+#include "raygui.h"
 
 #include <math.h>
+#include <string>
 #include <vector>
 
 // Configuration de la traînée
 const int MAX_TRAIL_POINTS = 30;
 
+void DrawElectronicConfiguration(
+    const std::vector<ElectronicSubshell>& configuration,
+    int x,
+    int y,
+    int screenWidth
+) {
+    constexpr int fontSize = 16;
+    constexpr int exponentFontSize = 11;
+    constexpr int termSpacing = 10;
+
+    for (const ElectronicSubshell& subshell : configuration) {
+        const std::string term =
+            std::to_string(subshell.principalNumber) + subshell.orbital;
+        const std::string exponent = std::to_string(subshell.electronCount);
+        const int termWidth = MeasureText(term.c_str(), fontSize);
+        const int exponentWidth = MeasureText(exponent.c_str(), exponentFontSize);
+        const int fullWidth = termWidth + exponentWidth + termSpacing;
+
+        if (x + fullWidth > screenWidth - 20) {
+            x = 320;
+            y += 24;
+        }
+
+        DrawText(term.c_str(), x, y, fontSize, WHITE);
+        DrawText(exponent.c_str(), x + termWidth, y - 4, exponentFontSize, WHITE);
+        x += fullWidth;
+    }
+}
+
 int main() {
+    // Initialisation de la fenêtre
     const int screenWidth = 1024;
     const int screenHeight = 768;
     InitWindow(screenWidth, screenHeight, "Simulation Atomique Avancee - C++ & Raylib");
+
+    // Liste Raygui : chaque nom est séparé du suivant par un point-virgule.
+    std::string atomNames;
+    for (const AtomConfig& atom : ATOMS) {
+        if (!atomNames.empty()) atomNames += ';';
+        atomNames += atom.name;
+    }
+
+    int currentAtomIndex = 1; // Par défaut : Lithium
+    std::vector<Electron> electrons = CreateElectrons(ATOMS[currentAtomIndex]);
+    int atomListScrollIndex = 0;
 
     // Caméra 3D
     Camera3D camera = { 0 };
@@ -21,9 +65,7 @@ int main() {
     camera.fovy = 45.0f;
     camera.projection = CAMERA_PERSPECTIVE;
 
-    int currentAtomIndex = 1; // Par défaut : Lithium
-    std::vector<Electron> electrons = CreateElectrons(ATOMS[currentAtomIndex]);
-
+    // nombre d'images par seconde
     SetTargetFPS(60);
 
     while (!WindowShouldClose()) {
@@ -31,19 +73,6 @@ int main() {
         UpdateCamera(&camera, CAMERA_ORBITAL);
 
         float deltaTime = GetFrameTime();
-
-        // --- GESTION DU MENU 2D (Clics de souris) ---
-        Vector2 mousePos = GetMousePosition();
-        for (size_t i = 0; i < ATOMS.size(); i++) {
-            // Zone cliquable pour chaque bouton du menu
-            Rectangle btnRect = { 20.0f, 80.0f + i * 45.0f, 180.0f, 35.0f };
-            if (CheckCollisionPointRec(mousePos, btnRect) && IsMouseButtonPressed(MOUSE_BUTTON_LEFT)) {
-                if (currentAtomIndex != (int)i) {
-                    currentAtomIndex = i;
-                    electrons = CreateElectrons(ATOMS[currentAtomIndex]); // Recréer les électrons
-                }
-            }
-        }
 
         // --- MISE A JOUR DES ELECTRONS & TRAINÉES ---
         for (auto& e : electrons) {
@@ -72,15 +101,15 @@ int main() {
             BeginMode3D(camera);
 
                 // Dessin du Noyau Simplifié (Représentation globale compacte)
-                int totalNucleons = ATOMS[currentAtomIndex].protons + ATOMS[currentAtomIndex].neutrons;
+                int totalNucleons = ATOMS[currentAtomIndex].atomicNumber + ATOMS[currentAtomIndex].neutrons;
                 // Génération visuelle pseudo-aléatoire fixe pour le noyau
                 for (int i = 0; i < totalNucleons; i++) {
                     float offset = (float)i * 0.5f;
                     float nx = sinf(offset * 3.0f) * 0.4f;
                     float ny = cosf(offset * 2.0f) * 0.4f;
                     float nz = sinf(offset * 1.5f) * 0.4f;
-                    Color nColor = (i % 2 == 0 && ATOMS[currentAtomIndex].protons > i/2) ? RED : GRAY;
-                    DrawSphere((Vector3){ nx, ny, nz }, 0.5f, nColor);
+                    Color nColor = (i % 2 == 0 && ATOMS[currentAtomIndex].atomicNumber > i/2) ? RED : RAYWHITE;
+                    DrawSphere((Vector3){ nx, ny, nz }, 0.1f, nColor);
                 }
 
                 // Dessin des Orbites, Traînées et Électrons
@@ -113,31 +142,29 @@ int main() {
             DrawText("SIMULATION ATOMIQUE 3D", 20, 20, 22, GOLD);
             DrawText("Choisissez un element :", 20, 55, 15, LIGHTGRAY);
 
-            // Dessin des boutons du menu
-            for (size_t i = 0; i < ATOMS.size(); i++) {
-                Rectangle btnRect = { 20.0f, 80.0f + i * 45.0f, 180.0f, 35.0f };
-                bool isHovered = CheckCollisionPointRec(mousePos, btnRect);
-                bool isCurrent = ((int)i == currentAtomIndex);
-
-                // Couleur de fond du bouton dynamique
-                Color btnColor = isCurrent ? DARKBLUE : (isHovered ? GetColor(0x333333FF) : GetColor(0x151515FF));
-                Color textColor = isCurrent ? WHITE : (isHovered ? GOLD : LIGHTGRAY);
-
-                DrawRectangleRec(btnRect, btnColor);
-                DrawRectangleLinesEx(btnRect, 1, isCurrent ? BLUE : DARKGRAY);
-                DrawText(ATOMS[i].name, 35, 88 + i * 45, 15, textColor);
+            Rectangle atomListBounds = { 20.0f, 80.0f, 230.0f, 480.0f };
+            int selectedAtomIndex = currentAtomIndex;
+            GuiListView(atomListBounds, atomNames.c_str(), &atomListScrollIndex, &selectedAtomIndex);
+            if (selectedAtomIndex >= 0 && selectedAtomIndex != currentAtomIndex) {
+                currentAtomIndex = selectedAtomIndex;
+                electrons = CreateElectrons(ATOMS[currentAtomIndex]);
             }
+
+            const AtomConfig& selectedAtom = ATOMS[currentAtomIndex];
+            const std::vector<ElectronicSubshell> electronicConfiguration =
+                GetElectronicConfiguration(selectedAtom.atomicNumber);
 
             // Panneau d'informations sur l'atome sélectionné (En bas à gauche)
             DrawRectangle(20, 600, 260, 140, GetColor(0x111111CC));
             DrawRectangleLines(20, 600, 260, 140, DARKGRAY);
             
-            DrawText(TextFormat("Configuration: %s", ATOMS[currentAtomIndex].name), 30, 610, 16, WHITE);
-            DrawText(TextFormat("- Protons (Rouge) : %d", ATOMS[currentAtomIndex].protons), 30, 640, 15, RED);
-            DrawText(TextFormat("- Neutrons (Gris) : %d", ATOMS[currentAtomIndex].neutrons), 30, 665, 15, GRAY);
-            DrawText(TextFormat("- Electrons (Bleu) : %d", ATOMS[currentAtomIndex].electronsK + ATOMS[currentAtomIndex].electronsL), 30, 690, 15, SKYBLUE);
-            DrawText(TextFormat("  (Couche K: %d | Couche L: %d)", ATOMS[currentAtomIndex].electronsK, ATOMS[currentAtomIndex].electronsL), 30, 712, 13, BLUE);
+            DrawText(TextFormat("Configuration: %s", selectedAtom.name), 30, 610, 16, WHITE);
+            DrawText(TextFormat("- Protons (Rouge) : %d", selectedAtom.atomicNumber), 30, 640, 15, RED);
+            DrawText(TextFormat("- Neutrons (Gris) : %d", selectedAtom.neutrons), 30, 665, 15, GRAY);
+            DrawText(TextFormat("- Electrons : %d", selectedAtom.atomicNumber), 30, 690, 15, SKYBLUE);
 
+            DrawText("Configuration electronique :", 320, 655, 16, LIGHTGRAY);
+            DrawElectronicConfiguration(electronicConfiguration, 320, 680, screenWidth);
             // Aide navigation
             DrawText("Utilisez la souris pour tourner la camera autour de l'atome", 320, 735, 14, GRAY);
 

@@ -1,0 +1,151 @@
+\documentclass[a4paper,11pt]{article}
+
+% Encodage et langue
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage[french]{babel}
+\usepackage{lmodern}
+
+% Mise en page et outils typographiques
+\usepackage[a4paper,margin=2.5cm]{geometry}
+\usepackage{enumitem}
+\usepackage{microtype}
+
+% Mathématiques et liens
+\usepackage{amsmath,amssymb}
+\usepackage[hidelinks]{hyperref}
+
+\title{Simulation atomique 3D en C++}
+\author{Notes de conception}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Présentation du projet}
+
+Le projet consiste à réaliser en C++ une simulation 3D simplifiée d'un atome.
+La représentation graphique s'inspire du modèle de Bohr : les électrons sont
+représentés autour d'un noyau constitué de protons et de neutrons.
+
+Cette représentation est un modèle pédagogique. Elle ne décrit pas la position
+réelle des électrons, qui est traitée en physique quantique par des orbitales
+et des probabilités de présence.
+
+\section{Données représentées}
+
+\subsection{Atome}
+
+Un atome est décrit par les informations suivantes :
+\begin{itemize}[nosep]
+    \item son nom et son symbole chimique, représentés par des chaînes de
+          caractères (\texttt{std::string}) ;
+    \item son numéro atomique, qui correspond au nombre de protons ;
+    \item son nombre de neutrons ;
+    \item son nombre d'électrons ;
+    \item sa configuration électronique ;
+    \item les coordonnées de son noyau, représentées par trois nombres
+          réels : \(x\), \(y\) et \(z\).
+\end{itemize}
+
+Dans la simulation, les protons, les neutrons et les électrons peuvent être
+représentés par des sphères. On peut, par exemple, distinguer les protons en
+rouge, les neutrons en blanc ou en gris, et les électrons en bleu.
+
+\subsection{Électron}
+
+Chaque électron simulé possède notamment :
+\begin{itemize}[nosep]
+    \item une représentation graphique sous la forme d'une sphère ;
+    \item une vitesse ;
+    \item une trajectoire ;
+    \item des coordonnées \(x\), \(y\) et \(z\).
+\end{itemize}
+
+\subsection{Couche électronique}
+
+Une couche électronique correspond à un niveau principal \(n\). Pour la
+visualisation, elle peut être représentée par un cercle gris centré sur le
+noyau. Son diamètre dépend de la couche.
+
+Les couches sont associées à des sous-couches \(s\), \(p\), \(d\) ou \(f\).
+Le nombre maximal d'électrons d'une couche de numéro \(n\) est \(2n^2\), mais
+les électrons ne remplissent pas nécessairement les couches dans l'ordre
+croissant de \(n\) : ils occupent les sous-couches suivant leur énergie.
+
+\subsection{Configuration électronique}
+
+La configuration électronique est une liste ordonnée de sous-couches et de
+leurs nombres d'électrons. Par exemple, la notation
+\(\text{1s}^2\,\text{2s}^2\) indique que les sous-couches \(1s\) et \(2s\)
+contiennent chacune deux électrons.
+
+Une structure C++ peut associer à chaque sous-couche son numéro principal,
+son type (\texttt{s}, \texttt{p}, \texttt{d} ou \texttt{f}) et son occupation.
+Schématiquement, on peut représenter les premières occupations ainsi :
+\[
+    \bigl[(1s,2), (2s,2)\bigr].
+\]
+Il faut tenir compte de l'ordre de remplissage et de certaines exceptions.
+
+\section{Règles de remplissage des sous-couches}
+
+\subsection{Capacité des sous-couches}
+
+Les sous-couches peuvent accueillir au maximum :
+\begin{itemize}[nosep]
+    \item sous-couche \(s\) : \(2\) électrons ;
+    \item sous-couche \(p\) : \(6\) électrons ;
+    \item sous-couche \(d\) : \(10\) électrons ;
+    \item sous-couche \(f\) : \(14\) électrons.
+\end{itemize}
+
+\subsection{Principe de stabilité (règle de Klechkowski)}
+
+Les sous-couches se remplissent généralement par ordre croissant d'énergie.
+La règle de Klechkowski permet d'établir cet ordre à partir de la somme
+\(n+\ell\), où \(n\) est le nombre quantique principal et \(\ell\) dépend du
+type de sous-couche :
+\[
+    s \rightarrow \ell=0,\qquad
+    p \rightarrow \ell=1,\qquad
+    d \rightarrow \ell=2,\qquad
+    f \rightarrow \ell=3.
+\]
+
+On remplit d'abord la sous-couche dont \(n+\ell\) est le plus petit. En cas
+d'égalité, on remplit d'abord celle dont \(n\) est le plus petit. L'ordre
+usuel commence ainsi :
+\[
+    1s \rightarrow 2s \rightarrow 2p \rightarrow 3s \rightarrow 3p
+    \rightarrow 4s \rightarrow 3d \rightarrow 4p \rightarrow 5s
+    \rightarrow 4d \rightarrow 5p \rightarrow 6s \rightarrow 4f
+    \rightarrow \cdots
+\]
+
+Cet ordre général comporte des exceptions pour certains éléments, car les
+niveaux d'énergie peuvent être très proches.
+
+\subsection{Principe d'exclusion de Pauli}
+
+Deux électrons d'un même atome ne peuvent pas avoir les quatre mêmes nombres
+quantiques. En conséquence, une orbitale ne peut contenir que deux électrons
+au maximum, et leurs spins doivent être opposés :
+\[
+    m_s=+\frac{1}{2}
+    \qquad\text{et}\qquad
+    m_s=-\frac{1}{2}.
+\]
+
+\subsection{Règle de Hund}
+
+Dans des orbitales de même énergie, les électrons occupent d'abord autant
+d'orbitales distinctes que possible, avec des spins parallèles. Ils commencent
+à s'apparier seulement après cette répartition.
+
+Par exemple, une sous-couche \(p\) possède trois orbitales. Avant
+l'appariement, les électrons se répartissent donc individuellement dans ces
+trois orbitales.
+
+\end{document}
