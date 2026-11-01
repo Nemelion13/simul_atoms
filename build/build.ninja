@@ -12,7 +12,7 @@
 
 # =============================================================================
 # Project: simul_atoms
-# Configurations: 
+# Configurations: Debug
 # =============================================================================
 
 #############################################
@@ -20,6 +20,11 @@
 
 ninja_required_version = 1.5
 
+
+#############################################
+# Set configuration variable for custom commands.
+
+CONFIGURATION = Debug
 # =============================================================================
 # Include auxiliary files.
 
@@ -44,18 +49,20 @@ cmake_ninja_workdir = C$:/Users/hp/Desktop/CPP$ Training/simul_atoms/build/
 
 build cmake_object_order_depends_target_simul_atoms: phony || .
 
-build CMakeFiles/simul_atoms.dir/main.cpp.obj: CXX_COMPILER__simul_atoms_unscanned_ C$:/Users/hp/Desktop/CPP$ Training/simul_atoms/main.cpp || cmake_object_order_depends_target_simul_atoms
+build CMakeFiles/simul_atoms.dir/main.cpp.obj: CXX_COMPILER__simul_atoms_unscanned_Debug C$:/Users/hp/Desktop/CPP$ Training/simul_atoms/main.cpp || cmake_object_order_depends_target_simul_atoms
+  CONFIG = Debug
   DEFINES = -DGRAPHICS_API_OPENGL_33 -DPLATFORM_DESKTOP -DUSE_LIBTYPE_SHARED
   DEP_FILE = CMakeFiles\simul_atoms.dir\main.cpp.obj.d
-  FLAGS = -std=gnu++17
+  FLAGS = -g -std=gnu++17
   OBJECT_DIR = CMakeFiles\simul_atoms.dir
   OBJECT_FILE_DIR = CMakeFiles\simul_atoms.dir
   TARGET_SUPPORT_DIR = CMakeFiles\simul_atoms.dir
 
-build CMakeFiles/simul_atoms.dir/atoms.cpp.obj: CXX_COMPILER__simul_atoms_unscanned_ C$:/Users/hp/Desktop/CPP$ Training/simul_atoms/atoms.cpp || cmake_object_order_depends_target_simul_atoms
+build CMakeFiles/simul_atoms.dir/atoms.cpp.obj: CXX_COMPILER__simul_atoms_unscanned_Debug C$:/Users/hp/Desktop/CPP$ Training/simul_atoms/atoms.cpp || cmake_object_order_depends_target_simul_atoms
+  CONFIG = Debug
   DEFINES = -DGRAPHICS_API_OPENGL_33 -DPLATFORM_DESKTOP -DUSE_LIBTYPE_SHARED
   DEP_FILE = CMakeFiles\simul_atoms.dir\atoms.cpp.obj.d
-  FLAGS = -std=gnu++17
+  FLAGS = -g -std=gnu++17
   OBJECT_DIR = CMakeFiles\simul_atoms.dir
   OBJECT_FILE_DIR = CMakeFiles\simul_atoms.dir
   TARGET_SUPPORT_DIR = CMakeFiles\simul_atoms.dir
@@ -68,7 +75,9 @@ build CMakeFiles/simul_atoms.dir/atoms.cpp.obj: CXX_COMPILER__simul_atoms_unscan
 #############################################
 # Link the executable simul_atoms.exe
 
-build simul_atoms.exe: CXX_EXECUTABLE_LINKER__simul_atoms_ CMakeFiles/simul_atoms.dir/main.cpp.obj CMakeFiles/simul_atoms.dir/atoms.cpp.obj | C$:/Users/hp/AppData/Local/Programs/MSYS2/ucrt64/lib/libraylib.dll.a
+build simul_atoms.exe: CXX_EXECUTABLE_LINKER__simul_atoms_Debug CMakeFiles/simul_atoms.dir/main.cpp.obj CMakeFiles/simul_atoms.dir/atoms.cpp.obj | C$:/Users/hp/AppData/Local/Programs/MSYS2/ucrt64/lib/libraylib.dll.a
+  CONFIG = Debug
+  FLAGS = -g
   LINK_LIBRARIES = C:/Users/hp/AppData/Local/Programs/MSYS2/ucrt64/lib/libraylib.dll.a  -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\simul_atoms.dir
   POST_BUILD = cd .

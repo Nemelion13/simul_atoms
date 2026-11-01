@@ -189,13 +189,7 @@ void TransferElectrons(
         }
     }
 
-    configuration.erase(
-        std::remove_if(configuration.begin(), configuration.end(),
-            [](const ElectronicSubshell& subshell) {
-                return subshell.electronCount == 0;
-            }),
-        configuration.end()
-    );
+    
 }
 
 }

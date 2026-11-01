@@ -1,0 +1,14 @@
+[
+{
+  "directory": "C:/Users/hp/Desktop/CPP Training/simul_atoms/build",
+  "command": "C:\\Users\\hp\\AppData\\Local\\Programs\\MSYS2\\ucrt64\\bin\\c++.exe -DGRAPHICS_API_OPENGL_33 -DPLATFORM_DESKTOP -DUSE_LIBTYPE_SHARED -g -std=gnu++17 -o CMakeFiles\\simul_atoms.dir\\main.cpp.obj -c \"C:\\Users\\hp\\Desktop\\CPP Training\\simul_atoms\\main.cpp\"",
+  "file": "C:/Users/hp/Desktop/CPP Training/simul_atoms/main.cpp",
+  "output": "C:/Users/hp/Desktop/CPP Training/simul_atoms/build/CMakeFiles/simul_atoms.dir/main.cpp.obj"
+},
+{
+  "directory": "C:/Users/hp/Desktop/CPP Training/simul_atoms/build",
+  "command": "C:\\Users\\hp\\AppData\\Local\\Programs\\MSYS2\\ucrt64\\bin\\c++.exe -DGRAPHICS_API_OPENGL_33 -DPLATFORM_DESKTOP -DUSE_LIBTYPE_SHARED -g -std=gnu++17 -o CMakeFiles\\simul_atoms.dir\\atoms.cpp.obj -c \"C:\\Users\\hp\\Desktop\\CPP Training\\simul_atoms\\atoms.cpp\"",
+  "file": "C:/Users/hp/Desktop/CPP Training/simul_atoms/atoms.cpp",
+  "output": "C:/Users/hp/Desktop/CPP Training/simul_atoms/build/CMakeFiles/simul_atoms.dir/atoms.cpp.obj"
+}
+]
