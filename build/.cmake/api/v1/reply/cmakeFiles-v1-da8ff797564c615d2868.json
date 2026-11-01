@@ -1,4 +1,16 @@
 {
+	"globsDependent" : 
+	[
+		{
+			"expression" : "C:/Users/hp/Desktop/CPP Training/simul_atoms/Tools/*.mp3",
+			"listDirectories" : true,
+			"paths" : 
+			[
+				"C:/Users/hp/Desktop/CPP Training/simul_atoms/Tools/btn_beat.mp3",
+				"C:/Users/hp/Desktop/CPP Training/simul_atoms/Tools/generic.mp3"
+			]
+		}
+	],
 	"inputs" : 
 	[
 		{
@@ -164,6 +176,12 @@
 		},
 		{
 			"path" : "Tools/logo.png"
+		},
+		{
+			"path" : "Tools/btn_beat.mp3"
+		},
+		{
+			"path" : "Tools/generic.mp3"
 		}
 	],
 	"kind" : "cmakeFiles",

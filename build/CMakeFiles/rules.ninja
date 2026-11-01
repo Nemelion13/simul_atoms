@@ -48,6 +48,15 @@ rule RERUN_CMAKE
 
 
 #############################################
+# Rule for re-checking globbed directories.
+
+rule VERIFY_GLOBS
+  command = C:\Users\hp\AppData\Local\Programs\MSYS2\ucrt64\bin\cmake.exe -P "C:\Users\hp\Desktop\CPP Training\simul_atoms\build\CMakeFiles\VerifyGlobs.cmake"
+  description = Re-checking globbed directories...
+  generator = 1
+
+
+#############################################
 # Rule for cleaning all built files.
 
 rule CLEAN

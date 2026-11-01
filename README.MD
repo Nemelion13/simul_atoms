@@ -7,8 +7,7 @@ interface pour choisir un élément chimique.
 Le projet sert aussi de support d'apprentissage. Il montre comment séparer un
 programme en plusieurs fichiers C++, comment représenter des données, comment
 écrire des fonctions et comment traduire une règle scientifique en algorithme.
-La configuration électronique est calculée à partir du numéro atomique : elle
-n'est plus saisie couche par couche dans la liste des atomes.
+La configuration électronique est calculée à partir du numéro atomique : 
 
 > **Important :** cette simulation est une illustration pédagogique. Les
 > électrons réels ne suivent pas de petites trajectoires circulaires autour du
@@ -602,3 +601,8 @@ Pour afficher cette chaîne dans une application console, ajouter
 `#include <iostream>` puis écrire `std::cout << texte << '\n';`. Dans
 l'application graphique actuelle, c'est `DrawElectronicConfiguration` qui
 dessine les termes et les exposants à l'écran.
+
+### Resources externes
+  - logo.png : capture d'écran de l'interface
+  - generic.mp3 : (youtube) INFINITY - Epic Futuristic Music Mix |       Atmospheric Sci-Fi Music 
+  - btn_beat.mp3 : https://pixabay.com/fr/users/juniorsoundays-19205462/

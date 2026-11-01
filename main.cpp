@@ -1,4 +1,7 @@
-/* Simulation 3D de la rotation des électrons d'un atome autour de son noyau*/
+/* Simulation 3D de la rotation des électrons d'un atome autour de son noyau
+    Nemelion13
+    Octobre 2026
+*/
 #include "raylib.h"
 #include "atoms.h"
 #define RAYGUI_IMPLEMENTATION
@@ -10,6 +13,17 @@
 
 // Configuration de la traînée
 const int MAX_TRAIL_POINTS = 30;
+
+std::string GetToolAssetPath(const char* fileName) {
+    const std::string executablePath =
+        std::string(GetApplicationDirectory()) + "Tools/" + fileName;
+    if (FileExists(executablePath.c_str())) return executablePath;
+
+    const std::string workingDirectoryPath = std::string("Tools/") + fileName;
+    if (FileExists(workingDirectoryPath.c_str())) return workingDirectoryPath;
+
+    return std::string("../Tools/") + fileName;
+}
 
 void DrawElectronicConfiguration(
     const std::vector<ElectronicSubshell>& configuration,
@@ -63,6 +77,43 @@ int main() {
         TraceLog(LOG_WARNING, "Window icon not found: Tools/logo.png");
     }
 
+    Music backgroundMusic = {};
+    Sound buttonSound = {};
+    bool hasBackgroundMusic = false;
+    bool hasButtonSound = false;
+    InitAudioDevice();
+    if (IsAudioDeviceReady()) {
+        const std::string backgroundMusicPath = GetToolAssetPath("generic.mp3");
+        if (FileExists(backgroundMusicPath.c_str())) {
+            backgroundMusic = LoadMusicStream(backgroundMusicPath.c_str());
+            if (IsMusicValid(backgroundMusic)) {
+                backgroundMusic.looping = true;
+                PlayMusicStream(backgroundMusic);
+                hasBackgroundMusic = true;
+            } else {
+                TraceLog(LOG_WARNING, "Unable to load background music: %s",
+                    backgroundMusicPath.c_str());
+            }
+        } else {
+            TraceLog(LOG_WARNING, "Background music not found: Tools/generic.mp3");
+        }
+
+        const std::string buttonSoundPath = GetToolAssetPath("btn_beat.mp3");
+        if (FileExists(buttonSoundPath.c_str())) {
+            buttonSound = LoadSound(buttonSoundPath.c_str());
+            if (IsSoundValid(buttonSound)) {
+                hasButtonSound = true;
+            } else {
+                TraceLog(LOG_WARNING, "Unable to load button sound: %s",
+                    buttonSoundPath.c_str());
+            }
+        } else {
+            TraceLog(LOG_WARNING, "Button sound not found: Tools/btn_beat.mp3");
+        }
+    } else {
+        TraceLog(LOG_WARNING, "Audio device is not available.");
+    }
+
     // Liste Raygui : chaque nom est séparé du suivant par un point-virgule.
     std::string atomNames;
     for (const AtomConfig& atom : ATOMS) {
@@ -92,6 +143,7 @@ int main() {
 
     while (!WindowShouldClose()) {
         const float deltaTime = GetFrameTime();
+        if (hasBackgroundMusic) UpdateMusicStream(backgroundMusic);
         const Vector2 mousePosition = GetMousePosition();
         const Rectangle autoOrbitButtonBounds = {
             static_cast<float>(GetScreenWidth()) - 210.0f, 20.0f, 190.0f, 30.0f
@@ -151,6 +203,7 @@ int main() {
             if (GuiButton(autoOrbitButtonBounds,
                 automaticCameraOrbit ? "Arreter la rotation" : "Rotation automatique")) {
                 automaticCameraOrbit = !automaticCameraOrbit;
+                if (hasButtonSound) PlaySound(buttonSound);
             }
 
             // 1. RENDU DE LA SCÈNE 3D
@@ -204,6 +257,7 @@ int main() {
             if (selectedAtomIndex >= 0 && selectedAtomIndex != currentAtomIndex) {
                 currentAtomIndex = selectedAtomIndex;
                 electrons = CreateElectrons(ATOMS[currentAtomIndex]);
+                if (hasButtonSound) PlaySound(buttonSound);
             }
 
             const AtomConfig& selectedAtom = ATOMS[currentAtomIndex];
@@ -229,6 +283,15 @@ int main() {
         EndDrawing();
     }
 
+    if (hasBackgroundMusic) {
+        StopMusicStream(backgroundMusic);
+        UnloadMusicStream(backgroundMusic);
+    }
+    if (hasButtonSound) {
+        StopSound(buttonSound);
+        UnloadSound(buttonSound);
+    }
+    if (IsAudioDeviceReady()) CloseAudioDevice();
     CloseWindow();
     return 0;
 }
