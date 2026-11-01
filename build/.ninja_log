@@ -1,12 +1,11 @@
 # ninja log v7
-316	5636	8152020709117017	CMakeFiles/simul_atoms.dir/main.cpp.obj	e7a8c682c77d9e4d
-5638	6419	8152020762336258	simul_atoms.exe	15209c33410c4fd2
-47	2461	8152011841725764	CMakeFiles/simul_atoms.dir/atoms.cpp.obj	b4cd714da9c4c1aa
-1836	12082	8152051413298716	build.ninja	828a4f1616143dfd
-1836	12082	8152051412988887	C:/Users/hp/Desktop/CPP Training/simul_atoms/build/cmake_install.cmake	828a4f1616143dfd
-19	169	8152051396146873	C:/Users/hp/Desktop/CPP Training/simul_atoms/build/CMakeFiles/cmake.verify_globs	97eb9a5e03168a84
-171	2190	8152051413298716	build.ninja	828a4f1616143dfd
-171	2190	8152051413298716	C:/Users/hp/Desktop/CPP Training/simul_atoms/build/cmake_install.cmake	828a4f1616143dfd
-38	191	8152051416917015	C:/Users/hp/Desktop/CPP Training/simul_atoms/build/CMakeFiles/cmake.verify_globs	97eb9a5e03168a84
 215	17425	8152051418733331	CMakeFiles/simul_atoms.dir/main.cpp.obj	e7a8c682c77d9e4d
 17427	19692	8152051590811584	simul_atoms.exe	15209c33410c4fd2
+47	2461	8152011841725764	CMakeFiles/simul_atoms.dir/atoms.cpp.obj	b4cd714da9c4c1aa
+171	2190	8152061931839414	build.ninja	828a4f1616143dfd
+171	2190	8152061931609560	C:/Users/hp/Desktop/CPP Training/simul_atoms/build/cmake_install.cmake	828a4f1616143dfd
+43	146	8152061889204845	C:/Users/hp/Desktop/CPP Training/simul_atoms/build/CMakeFiles/cmake.verify_globs	97eb9a5e03168a84
+148	4581	8152061931839414	build.ninja	828a4f1616143dfd
+148	4581	8152061931839414	C:/Users/hp/Desktop/CPP Training/simul_atoms/build/cmake_install.cmake	828a4f1616143dfd
+30	126	8152061935836765	C:/Users/hp/Desktop/CPP Training/simul_atoms/build/CMakeFiles/cmake.verify_globs	97eb9a5e03168a84
+147	2238	8152061936996310	simul_atoms.exe	e8467e86a152146c

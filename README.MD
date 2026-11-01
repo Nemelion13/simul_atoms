@@ -120,6 +120,19 @@ cmake --build build
 .\build\simul_atoms.exe
 ```
 
+### Lancer l'application depuis le Bureau
+
+Sous Windows, le projet copie les DLL nécessaires à côté de l'exécutable lors
+de la compilation. Après avoir exécuté `cmake --build build`, tu peux lancer
+`build\simul_atoms.exe` directement, sans ouvrir VS Code ni activer
+l'environnement dans PowerShell. Le dossier `build\Tools` contient également
+le logo et les fichiers audio utilisés par l'application.
+
+Pour créer un raccourci Bureau, fais un clic droit sur `build\simul_atoms.exe`,
+puis **Afficher d'autres options > Envoyer vers > Bureau (créer un raccourci)**.
+Le raccourci ouvre la même application ; il ne démarre pas automatiquement avec
+Windows.
+
 Le dossier `build` contient les fichiers générés par CMake ; ce ne sont pas
 les fichiers source du programme.
 
